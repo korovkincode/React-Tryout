@@ -14,12 +14,14 @@ const Navbar = ({items}) => {
 
     return (
         <div className="navbar">
-            <MyButton onClick={logout}>
-                Выйти
-            </MyButton>
+            {Boolean(isAuth) &&
+                <MyButton onClick={logout}>
+                    Выйти
+                </MyButton>
+            }
             <div className="navbar__links">
                 {items.map((item) => 
-                    <Link to={item.link}>{item.name}</Link>
+                    <Link className="navbar__link" to={item.link}>{item.name}</Link>
                 )}
             </div>
         </div>

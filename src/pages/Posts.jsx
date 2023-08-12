@@ -23,6 +23,8 @@ const Posts = () => {
     const [pagesArray, setPagesArray] = useState([]);
     const lastElement = useRef();
 
+    console.log(totalPages, page, pagesArray, posts);
+
     const [fetсhPosts, isPostsLoading, postError] = useFetching(async () => {
         const response = await PostService.getAll(limit, page);
         if (page > 1) {
@@ -36,9 +38,9 @@ const Posts = () => {
         setTotalPages(getPageCount(totalCount, limit));
     });
 
-    useObserver(lastElement, page < totalPages, isPostsLoading, () => {
+    /* useObserver(lastElement, (page < totalPages && posts.length === allPosts.length), isPostsLoading, () => {
         setPage(page + 1);
-    });
+    }); */
 
     useEffect(() => {
         fetсhPosts()
