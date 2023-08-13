@@ -1,10 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { createPath, useParams } from "react-router-dom";
 import PostService from "../API/PostService";
 import { useFetching } from "../hooks/useFetching";
 import Loader from "../components/UI/Loader/Loader";
+import MyButton from "../components/UI/button/MyButton";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const PostPage = () => {
     const params = useParams();
@@ -16,6 +18,10 @@ const PostPage = () => {
     });
     const [fetchComments, isCommentsLoading, errorComments] = useFetching(async (id) => {
         const response = await PostService.getComments(id);
+        for (let ind = 0; ind < response.data.length; ind++) {
+            response.data[ind].likes = 0;
+            response.data[ind].dislikes = 0;
+        }
         setComments(response.data);
     });
 
@@ -24,24 +30,56 @@ const PostPage = () => {
         fetchComments(params.id);
     }, []);
 
+    const scoreComment = (comm, val) => {
+        for (let ind = 0; ind < comments.length; ind++) {
+            if (comm.id !== comments[ind].id) continue;
+            if (val === 1) comments[ind].likes++;
+            else comments[ind].dislikes++;
+        }
+        setComments([...comments]);
+    }
+
     return (
         <div>
             <h1>Вы открыли страницу поста с ID = {post.id}</h1>
             {isPostLoading
-                ? <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}> <Loader /> </div>
-                : <div>{post.id}. {post.title}</div>
-            }
-            <h1>Комментарии</h1>
-            {isCommentsLoading
-                ? <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}> <Loader /> </div>
-                : <div>
-                    {comments.map((comm) =>
-                        <div key={comm.id} style={{marginTop: "15px"}}>
-                            <h5>{comm.email}</h5>
-                            <div>{comm.body}</div>
+                ?   <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}> <Loader /> </div>
+                :   <div className="post">
+                        <div className="post__content">
+                            <strong>{post.id}. {post.title}</strong>
+                            <div>
+                                {post.body}
+                            </div>
                         </div>
-                    )}
-                  </div>
+                    </div>
+            }
+            <h1 style={{marginTop: "30px"}}>Комментарии</h1>
+            {isCommentsLoading
+                ?   <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}> <Loader /> </div>
+                :   <div>
+                        <TransitionGroup>
+                            {[...comments].sort((a, b) => a.likes - a.dislikes < b.likes - b.dislikes ? 1 : -1).map((comm, index) =>
+                                <CSSTransition key={index} timeout={500} className="comment">
+                                    <div key={index}>
+                                        <div className="comment__content">
+                                            <h3>{comm.email}</h3>
+                                            <div>{comm.body}</div>
+                                        </div>
+                                        <div className="post__btns">
+                                            {comm.likes
+                                                ?   <MyButton btnBorder="white" onClick={() => scoreComment(comm, 1)}>👍 {comm.likes}</MyButton>
+                                                :   <MyButton btnBorder="white" onClick={() => scoreComment(comm, 1)}>👍</MyButton>
+                                            }
+                                            {comm.dislikes
+                                                ?   <MyButton btnBorder="white" onClick={() => scoreComment(comm, -1)}>👎 {comm.dislikes}</MyButton>
+                                                :   <MyButton btnBorder="white" onClick={() => scoreComment(comm, -1)}>👎</MyButton>
+                                            }
+                                        </div>
+                                    </div>
+                                </CSSTransition>
+                            )}
+                        </TransitionGroup>
+                    </div>
             }
         </div>
     )

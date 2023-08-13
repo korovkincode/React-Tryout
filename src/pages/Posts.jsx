@@ -28,8 +28,10 @@ const Posts = () => {
     const [fetсhPosts, isPostsLoading, postError] = useFetching(async () => {
         const response = await PostService.getAll(limit, page);
         if (page > 1) {
-            setPosts([...posts, ...response.data]);
-            setAllPosts([...allPosts, ...response.data]);
+            // setPosts([...posts, ...response.data]);
+            // setAllPosts([...allPosts, ...response.data]);
+            setPosts(response.data);
+            setAllPosts(response.data);
         } else {
             setPosts(response.data);
             setAllPosts(response.data);

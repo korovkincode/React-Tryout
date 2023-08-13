@@ -45,6 +45,7 @@
     transform: translateX(-350px);
     transition: all 500ms ease-in;
 }
+
 .page__wrapper {
     margin-top: 30px;
     margin-bottom: 20px;
@@ -81,4 +82,28 @@
 .navbar__link {
     padding-right: 20px;
     color: teal;
+}
+
+.comment {
+    display: flex;
+    margin-top: 15px;
+    border: 2px solid pink;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+.comment-enter {
+    opacity: 0;
+}
+.comment-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+.comment-exit {
+    opacity: 1;
+}
+.comment-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
 }

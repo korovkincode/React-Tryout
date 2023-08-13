@@ -6,3 +6,6 @@
     border: 1px solid teal;
     cursor: pointer;
 }
+.white {
+    border: 1px solid white;
+}
