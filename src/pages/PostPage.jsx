@@ -1,12 +1,11 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { createPath, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PostService from "../API/PostService";
 import { useFetching } from "../hooks/useFetching";
 import Loader from "../components/UI/Loader/Loader";
 import MyButton from "../components/UI/button/MyButton";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const PostPage = () => {
     const params = useParams();
@@ -57,28 +56,24 @@ const PostPage = () => {
             {isCommentsLoading
                 ?   <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}> <Loader /> </div>
                 :   <div>
-                        <TransitionGroup>
-                            {[...comments].sort((a, b) => a.likes - a.dislikes < b.likes - b.dislikes ? 1 : -1).map((comm, index) =>
-                                <CSSTransition key={index} timeout={500} className="comment">
-                                    <div key={index}>
-                                        <div className="comment__content">
-                                            <h3>{comm.email}</h3>
-                                            <div>{comm.body}</div>
-                                        </div>
-                                        <div className="post__btns">
-                                            {comm.likes
-                                                ?   <MyButton btnBorder="white" onClick={() => scoreComment(comm, 1)}>👍 {comm.likes}</MyButton>
-                                                :   <MyButton btnBorder="white" onClick={() => scoreComment(comm, 1)}>👍</MyButton>
-                                            }
-                                            {comm.dislikes
-                                                ?   <MyButton btnBorder="white" onClick={() => scoreComment(comm, -1)}>👎 {comm.dislikes}</MyButton>
-                                                :   <MyButton btnBorder="white" onClick={() => scoreComment(comm, -1)}>👎</MyButton>
-                                            }
-                                        </div>
+                        {[...comments].sort((a, b) => a.likes - a.dislikes < b.likes - b.dislikes ? 1 : -1).map((comm, index) =>
+                                <div key={index} className="comment">
+                                    <div className="comment__content">
+                                        <h3>{comm.email}</h3>
+                                        <div>{comm.body}</div>
                                     </div>
-                                </CSSTransition>
-                            )}
-                        </TransitionGroup>
+                                    <div className="post__btns">
+                                        {comm.likes
+                                            ?   <MyButton btnBorder="white" onClick={() => scoreComment(comm, 1)}>👍 {comm.likes}</MyButton>
+                                            :   <MyButton btnBorder="white" onClick={() => scoreComment(comm, 1)}>👍</MyButton>
+                                        }
+                                        {comm.dislikes
+                                            ?   <MyButton btnBorder="white" onClick={() => scoreComment(comm, -1)}>👎 {comm.dislikes}</MyButton>
+                                            :   <MyButton btnBorder="white" onClick={() => scoreComment(comm, -1)}>👎</MyButton>
+                                        }
+                                    </div>
+                                </div>
+                        )}
                     </div>
             }
         </div>

@@ -22,6 +22,10 @@ const AppRouter = () => {
                 ? <Route path="/login" element={<Navigate to="/posts" replace />} />
                 : <Route path="/posts" element={<Navigate to="/login" replace />} />
             }
+            {isAuth
+                ? <Route path="/" element={<Navigate to="/posts" replace />} />
+                : <Route path="/" element={<Navigate to="/login" replace />} />
+            }
             <Route path="/*" element={<Error />} />
         </Routes>
     )
