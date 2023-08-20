@@ -38,7 +38,7 @@ const Posts = () => {
         }
         const totalCount = response.headers["x-total-count"];
         setTotalPages(getPageCount(totalCount, limit));
-    });
+    })
 
     /* useObserver(lastElement, (page < totalPages && posts.length === allPosts.length), isPostsLoading, () => {
         setPage(page + 1);

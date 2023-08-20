@@ -6,15 +6,18 @@ import PostService from "../API/PostService";
 import { useFetching } from "../hooks/useFetching";
 import Loader from "../components/UI/Loader/Loader";
 import MyButton from "../components/UI/button/MyButton";
+import MyModal from "../components/UI/MyModal/MyModal";
+import CommentForm from "../components/CommentForm";
 
 const PostPage = () => {
     const params = useParams();
     const [post, setPost] = useState({});
     const [comments, setComments] = useState([]);
+    const [modal, setModal] = useState(0);
     const [fetchPost, isPostLoading, errorPost] = useFetching(async (id) => {
         const response = await PostService.getPost(id);
         setPost(response.data);
-    });
+    })
     const [fetchComments, isCommentsLoading, errorComments] = useFetching(async (id) => {
         const response = await PostService.getComments(id);
         for (let ind = 0; ind < response.data.length; ind++) {
@@ -22,12 +25,12 @@ const PostPage = () => {
             response.data[ind].dislikes = 0;
         }
         setComments(response.data);
-    });
+    })
 
     useEffect(() => {
         fetchPost(params.id);
         fetchComments(params.id);
-    }, []);
+    }, [])
 
     const scoreComment = (comm, val) => {
         for (let ind = 0; ind < comments.length; ind++) {
@@ -38,8 +41,16 @@ const PostPage = () => {
         setComments([...comments]);
     }
 
+    const createComment = (newComm) => {
+        setComments([...comments, newComm]);
+        setModal(0);
+    }
+
     return (
         <div>
+            <MyModal visible={modal} setVisible={setModal}>
+                <CommentForm create={createComment} />
+            </MyModal>
             <h1>Вы открыли страницу поста с ID = {post.id}</h1>
             {isPostLoading
                 ?   <div style={{display: "flex", justifyContent: "center", marginTop: "50px"}}> <Loader /> </div>
@@ -76,6 +87,7 @@ const PostPage = () => {
                         )}
                     </div>
             }
+            <MyButton onClick={() => setModal(1)} style={{marginTop: "10px"}}>Оставить комментарий</MyButton>
         </div>
     )
 }
